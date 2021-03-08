@@ -1,6 +1,6 @@
 Truth table Visuliser made using Python.
 
-TITLE: DAPS Scenario 2.
+DAPS Scenario 2.
 
 
 Team Roles:
