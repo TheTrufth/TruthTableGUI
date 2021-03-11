@@ -20,7 +20,7 @@ class MainApplication(tk.Frame):
         self.MenuFrame.pack()
 
     def clearwin(self):
-        '''Clear the frame f's widgets'''
+        '''Clear everything on screen'''
         for child in self.parent.winfo_children():
             child.destroy()
 
@@ -38,10 +38,57 @@ class MainApplication(tk.Frame):
             self.loadAccount()
         
     def calculatorMenu(self):
+        def updateExpr(value):
+            expr.set(expr.get() + str(value))
+        
+        def clearExpr():
+            expr.set("")
+        
+        def delExpr():
+            expr.set(expr.get()[:-1])
+
+        expr = tk.StringVar()
+        expr.set("")
         self.CalculatorMenuFrame = tk.Frame(self.parent)
+        
         Label = tk.Label(self.CalculatorMenuFrame, text="Welcome to calculator menu").grid(row=0, column=0)
-        goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=1, column=0)
+        Entry = tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=expr).grid(row=1, column=1)
+        delButton = tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
+        clearButton = tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1, column=3)
+
+        buttonFrame = tk.Frame(self.parent)
+        
+        notButton = tk.Button(buttonFrame, text="¬", width=10, height=3, command=lambda: updateExpr("¬")).grid(row=2, column=0)
+        andButton = tk.Button(buttonFrame, text="∧", width=10, height=3, command=lambda: updateExpr("∧")).grid(row=2, column=1)
+        orButton = tk.Button(buttonFrame, text="∨", width=10, height=3, command=lambda: updateExpr("∨")).grid(row=2, column=2)
+        impliesButton = tk.Button(buttonFrame, text="→", width=10, height=3, command=lambda: updateExpr("→")).grid(row=2, column=3)
+        equivButton = tk.Button(buttonFrame, text="↔", width=10, height=3, command=lambda: updateExpr("↔")).grid(row=2, column=4)
+
+        # LBRACKET AND RBRACKET
+        lbracketButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(row=3, column=0)
+        rbracketButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(row=3, column=1)
+        
+        # VARIABLES
+        pVarButton = tk.Button(buttonFrame, text="P", width=10, height=3, command=lambda: updateExpr("P")).grid(row=4, column=0)
+        qVarButton = tk.Button(buttonFrame, text="Q", width=10, height=3, command=lambda: updateExpr("Q")).grid(row=4, column=1)
+        rVarButton = tk.Button(buttonFrame, text="R", width=10, height=3, command=lambda: updateExpr("R")).grid(row=4, column=2)
+        sVarButton = tk.Button(buttonFrame, text="S", width=10, height=3, command=lambda: updateExpr("S")).grid(row=4, column=3)
+        tVarButton = tk.Button(buttonFrame, text="T", width=10, height=3, command=lambda: updateExpr("T")).grid(row=4, column=4)
+        uVarButton = tk.Button(buttonFrame, text="U", width=10, height=3, command=lambda: updateExpr("U")).grid(row=4, column=5)
+        
+        # SECONADRY VARIABLES
+        aVarButton = tk.Button(buttonFrame, text="A", width=10, height=3, command=lambda: updateExpr("A")).grid(row=5, column=0)
+        bVarButton = tk.Button(buttonFrame, text="B", width=10, height=3, command=lambda: updateExpr("B")).grid(row=5, column=1)
+        cVarButton = tk.Button(buttonFrame, text="C", width=10, height=3, command=lambda: updateExpr("C")).grid(row=5, column=2)
+        dVarButton = tk.Button(buttonFrame, text="D", width=10, height=3, command=lambda: updateExpr("D")).grid(row=5, column=3)
+        eVarButton = tk.Button(buttonFrame, text="E", width=10, height=3, command=lambda: updateExpr("E")).grid(row=5, column=4)
+        fVarButton = tk.Button(buttonFrame, text="F", width=10, height=3, command=lambda: updateExpr("F")).grid(row=5, column=5)
+
+        submitButton = tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: self.goto_x_Menu(0)).grid(row=6, column=1)
+        goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=6, column=0)
         self.CalculatorMenuFrame.pack()
+        buttonFrame.pack()
+
     
     def practiceMenu(self):
         self.PracticeMenuFrame = tk.Frame(self.parent)
