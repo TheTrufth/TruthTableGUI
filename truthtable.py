@@ -4,23 +4,28 @@ from itertools import product, tee
 # Forked from https://gist.github.com/pindia/3836713
 # Made by @GitHub user: pinda
 
-def AND(a, b):
+# AND
+def wo(a, b):
     for p, q in zip(a, b):
         yield p and q
 
-def OR(a, b):
+# OR
+def ow(a, b):
     for p, q in zip(a, b):
         yield p or q
 
-def NOT(a):
+# NOT
+def zx(a):
     for p in a:
         yield not p
 
-def EQUIV(a, b):
+# EQUIV
+def xz(a, b):
     for p, q in zip(a, b):
         yield p is q
 
-def IMPLIES(a, b):
+# IMPLIES
+def kl(a, b):
     for p, q in zip(a, b):
         yield (not p) or q
 
@@ -40,22 +45,25 @@ def print_result(data, result):
     dinesh = []
     headers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[:n]
     
-    print(headers + "|RESULT")
+    #print(headers + "|RESULT")
     #dinesh.append(headers + "|RESULT")
-    print('-' * len(headers) + '+------')
+    #print('-' * len(headers) + '+------')
     
     for row, result_cell in zip(data, result):
-        print(''.join({True: 'T', False:'F'}[cell] for cell in row) + '|' + '  ' + {True: 'T', False:'F'}[result_cell])
-        dinesh.append([[{True: '1', False:'0'}[cell] for cell in row], {True: '1', False:'0'}[result_cell]])
+        #print(''.join({True: 'T', False:'F'}[cell] for cell in row) + '|' + '  ' + {True: 'T', False:'F'}[result_cell])
+        dinesh.append([{True: '1', False:'0'}[cell] for cell in row] + list({True: '1', False:'0'}[result_cell]))
     
-    print("dinesh: ", dinesh)
-    print("dinesh[0]: ", dinesh[0])
-    print("dinesh[0][0]: ", dinesh[0][1])
+    #print("dinesh: ", dinesh)
+    '''print("dinesh[0]: ", dinesh[0])
+    final = []
+    final.append(dinesh[0][0] )
+    print("dinesh[0][0]: ", dinesh[0][0] + dinesh[0][1])'''
+    return dinesh
 
 
 
 if __name__ == '__main__':
     data = create(num=2)
-    A, B = unpack(data)
-    result = IMPLIES(A, B)
+    P, Q = unpack(data)
+    result = AND(P, Q)
     print_result(data, result)
