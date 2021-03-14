@@ -1,6 +1,6 @@
 import random
 #from sympy.abc import A, B, C
-from sympy.logic.boolalg import to_dnf
+from sympy.logic.boolalg import to_dnf, to_cnf
 from sympy.logic.boolalg import Or
 from sympy.logic.boolalg import And
 from sympy import Symbol 
@@ -18,5 +18,9 @@ def get_prop_formula():
     return sentence
 
 def convertToDNF():
-    print(to_dnf(get_prop_formula()))
+    print("DNF = " , to_dnf(get_prop_formula()))
+
+def convertToCNF():
+    print("CNF = " ,to_cnf(get_prop_formula()))
 convertToDNF()
+convertToCNF()
