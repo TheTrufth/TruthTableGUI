@@ -25,10 +25,14 @@ def convertToCNF(formula):
     return to_cnf(get_prop_formula())
 
 #function to be used in practice part of the program to validate when user has to convert formula into CNF
-def check_if_cnf(formula):
-    return is_cnf(formula)
+def check_if_cnf(formula,userinput):
+    x = convertToCNF(formula)
+    return(x==userinput)
     
+
 #function to be used in practice part of the program to validate when user has to convert formula into CNF
-def check_if_dnf(formula):
-    return is_cnf(formula)
+def check_if_dnf(formula,userinput):
+    x = convertToDNF(formula)
+    print(x==userinput)
+    return(x==userinput)
     
