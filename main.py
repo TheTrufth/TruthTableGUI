@@ -4,9 +4,10 @@ pip3 install sympy
 '''
 import tkinter as tk
 from tkinter import ttk as ttk
-import truthtable as TT
+from truthtable import create, unpack, print_result, wo, ow, zx, xz, kl
 import data_generation as dg
-
+from sympy import sympify, srepr
+varList = ['A', 'B', 'C', 'D', 'E', 'F', 'P', 'Q', 'R', 'S', 'X', 'U']
 IntroductionSlides = ["• Propositional logic is one of the simplest logics and is in universal usage.",
                       "• Formulas are built up from atomic propositions (factual statements) using logical connectives:",
                       "¬:NOT ∧:AND ∨:OR →:IMPLIES ↔:IF AND ONLY IF",
@@ -78,110 +79,93 @@ class MainApplication(tk.Frame):
 
     def calculatorMenu(self):
         def updateExpr(value):
-            expr.set(expr.get() + str(value))
+            exprView.set(exprView.get() + str(value))
 
         def clearExpr():
-            expr.set("")
+            exprView.set("")
 
         def delExpr():
-            expr.set(expr.get()[:-1])
+            exprView.set(exprView.get()[:-1])
 
         ''' To Infix Notation '''
+        def toInfix(expr):
+            # TT.wo(A,B)
+            exprr = srepr(sympify(expr))
+            exprr = exprr.replace("Symbol", "")
+            exprr = exprr.replace("'", "")
+            print(exprr)
 
-        def convToInf(expr):
-            red = []
-            new = expr[:1]
-            p = []
-            previous_char = None
-
-            for char in expr:
-                if previous_char == "¬":
-                    p.pop()
-                    p.append("TT.zx(" + char + ")")
-                else:
-                    p.append(char)
-                previous_char = char
-
-            expr = p
-            previous_char = None
-            colName = []
-            for char in expr:
-                if char != "∧" and char != "∨" and char != "→" and char != "↔":
-                    colName.append(char)
-                    red.append(char)
-                if previous_char == "∧":
-                    new = "TT.wo(" + new + "," + char + ")"
-                    red = []
-                elif previous_char == "∨":
-                    new = "TT.ow(" + new + "," + char + ")"
-                    red = []
-                elif previous_char == "→":
-                    new = "TT.kl(" + new + "," + char + ")"
-                    red = []
-                elif previous_char == "↔":
-                    new = "TT.xz(" + new + "," + char + ")"
-                    red = []
-                previous_char = char
-            return new, colName
+            exprr = exprr.replace("And", "wo")
+            exprr = exprr.replace("Or", "ow")
+            exprr = exprr.replace("Not", "zx")
+            exprr = exprr.replace("Equiv", "xz")
+            exprr = exprr.replace("Implies", "kl")
+            colNames = []
+            for char in exprr:
+                if char in varList and char not in colNames:
+                    colNames.append(char)
+            return exprr, colNames
 
         def displayTable(s, colNames):
             tableWindow = tk.Toplevel(self.parent)
-            heading = tk.Label(tableWindow, text="Truth Table for " + expr.get(), font=("Arial", 30)).grid(row=0,
-                                                                                                           columnspan=3)
-            listBox = ttk.Treeview(tableWindow, columns=colNames, show='headings', height=28)
-            for col in colNames:
+            heading = tk.Label(tableWindow, text="Truth Table for " + exprView.get(), font=("Arial", 30)).grid(row=0,
+                                                                                                               columnspan=3)
+            cc = list(colNames)
+            cc.append(exprView.get())
+            listBox = ttk.Treeview(tableWindow, columns=cc, show='headings', height=28)
+            for col in cc:
                 listBox.heading(col, text=col)
             listBox.grid(row=1, column=0, columnspan=2, rowspan=50)
 
             my_dict = {}
 
-            data = TT.create(num=len(colNames) - 1)
-            unpacked = TT.unpack(data)
+            data = create(num=len(colNames))
+            unpacked = unpack(data)
 
             i = 0
-            for cn in colNames[:-1]:
+            for cn in colNames:
                 my_dict[cn] = unpacked[i]
                 i += 1
 
-            key = None
             for (key) in my_dict.keys():
                 s = s.replace(key, str(my_dict.get(key)))
 
             result = eval(s)
-            vals = TT.print_result(data, result)
+            vals = print_result(data, result)
             for c in vals:
                 listBox.insert("", "end", values=(c))
 
         def workOut(expr):
-            s, colName = convToInf(expr)
-            colName.append(expr)
+            s, colName = toInfix(expr)
             displayTable(s, tuple(colName))
 
-        expr = tk.StringVar()
-        expr.set("")
+        exprView = tk.StringVar()
+        exprView.set("")
         self.CalculatorMenuFrame = tk.Frame(self.parent)
 
         tk.Label(self.CalculatorMenuFrame, text="Welcome to calculator menu").grid(row=0, column=0)
-        tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=expr).grid(row=1, column=1)
+        tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=exprView).grid(row=1, column=1)
         tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
         tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1, column=3)
 
         buttonFrame = tk.Frame(self.parent)
 
-        tk.Button(buttonFrame, text="¬", width=10, height=3, command=lambda: updateExpr("¬")).grid(row=2,
+        tk.Button(buttonFrame, text="¬", width=10, height=3, command=lambda: updateExpr("~")).grid(row=2,
                                                                                                    column=0)
-        tk.Button(buttonFrame, text="∧", width=10, height=3, command=lambda: updateExpr("∧")).grid(row=2,
+        tk.Button(buttonFrame, text="∧", width=10, height=3, command=lambda: updateExpr("&")).grid(row=2,
                                                                                                    column=1)
-        tk.Button(buttonFrame, text="∨", width=10, height=3, command=lambda: updateExpr("∨")).grid(row=2,
+        tk.Button(buttonFrame, text="∨", width=10, height=3, command=lambda: updateExpr("|")).grid(row=2,
                                                                                                    column=2)
-        tk.Button(buttonFrame, text="→", width=10, height=3, command=lambda: updateExpr("→")).grid(
+        tk.Button(buttonFrame, text="→", width=10, height=3, command=lambda: updateExpr(">>")).grid(
             row=2, column=3)
         tk.Button(buttonFrame, text="↔", width=10, height=3, command=lambda: updateExpr("↔")).grid(row=2,
                                                                                                    column=4)
 
         # LBRACKET AND RBRACKET / Haven't implemented this yet
-        # lbracketButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(row=3, column=0)
-        # rbracketButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(row=3, column=1)
+        lbracketButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(
+            row=3, column=0)
+        rbracketButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(
+            row=3, column=1)
 
         # VARIABLES
         tk.Button(buttonFrame, text="P", width=10, height=3, command=lambda: updateExpr("P")).grid(row=4,
@@ -211,7 +195,7 @@ class MainApplication(tk.Frame):
         tk.Button(buttonFrame, text="F", width=10, height=3, command=lambda: updateExpr("F")).grid(row=5,
                                                                                                    column=5)
 
-        tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(expr.get())).grid(
+        tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get())).grid(
             row=6, column=1)
         tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
             row=6, column=0)
