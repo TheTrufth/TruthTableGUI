@@ -174,12 +174,10 @@ class MainApplication(tk.Frame):
                                                                                                    column=1)
         tk.Button(buttonFrame, text="R", width=10, height=3, command=lambda: updateExpr("R")).grid(row=4,
                                                                                                    column=2)
-        tk.Button(buttonFrame, text="S", width=10, height=3, command=lambda: updateExpr("S")).grid(row=4,
-                                                                                                   column=3)
         tk.Button(buttonFrame, text="X", width=10, height=3, command=lambda: updateExpr("X")).grid(row=4,
-                                                                                                   column=4)
+                                                                                                   column=3)
         tk.Button(buttonFrame, text="U", width=10, height=3, command=lambda: updateExpr("U")).grid(row=4,
-                                                                                                   column=5)
+                                                                                                   column=4)
 
         # SECONADRY VARIABLES
         tk.Button(buttonFrame, text="A", width=10, height=3, command=lambda: updateExpr("A")).grid(row=5,
@@ -192,8 +190,7 @@ class MainApplication(tk.Frame):
                                                                                                    column=3)
         tk.Button(buttonFrame, text="E", width=10, height=3, command=lambda: updateExpr("E")).grid(row=5,
                                                                                                    column=4)
-        tk.Button(buttonFrame, text="F", width=10, height=3, command=lambda: updateExpr("F")).grid(row=5,
-                                                                                                   column=5)
+
 
         tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get())).grid(
             row=6, column=1)
