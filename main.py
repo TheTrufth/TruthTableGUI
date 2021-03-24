@@ -214,10 +214,11 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame = tk.Frame(self.parent)
 
         prop_formula = dg.get_prop_formula()
+        print(dg.convertToDNF(prop_formula))
 
         HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
         prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
-        Entry = tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=expr).grid(row=1, column=1)
+        Entry = tk.Entry(self.CalculatorMenuFrame, width=80, textvariable=expr).grid(row=1, column=1)
         delButton = tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
         clearButton = tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1,
                                                                                                           column=3)
@@ -242,8 +243,13 @@ class MainApplication(tk.Frame):
             row=6, column=1)
         notcVarButton = tk.Button(buttonFrame, text="~C", width=10, height=3, command=lambda: updateExpr("~C")).grid(
             row=6, column=2)
+        lparenButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(
+            row=6, column=3)
+        rparenButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(
+            row=6, column=4)
 
-        def isDNF():
+
+        def isDNF(prop_formula):
             if dg.check_if_dnf(prop_formula, expr.get()) == False:
                 popup = tk.Tk()
                 popup.wm_title("Incorrect")
@@ -261,7 +267,7 @@ class MainApplication(tk.Frame):
                 B1.pack()
                 popup.mainloop()
 
-        submitButton = tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: isDNF()).grid(row=6, column=1)
+        submitButton = tk.Button(self.CalculatorMenuFrame, text="Submit", command=lambda: isDNF(prop_formula)).grid(row=6, column=1)
         goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
             row=6, column=0)
         self.CalculatorMenuFrame.pack()
