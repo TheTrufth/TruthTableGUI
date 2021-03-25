@@ -223,7 +223,8 @@ class MainApplication(tk.Frame):
             return question, answer1,answer2,answer3,correct
 
         self.MainFrame = tk.Frame(self.parent)
-        label = tk.Label(self.MainFrame,text=getQuestion()[0]).grid(row=0, column=0)
+        question = getQuestion()
+        label = tk.Label(self.MainFrame,text=question[0]).grid(row=0, column=0)
         
         def displayMessage(_str):
             popup = tk.Tk()
@@ -235,11 +236,12 @@ class MainApplication(tk.Frame):
 
         import random
         ycoordinates = random.sample(range(1, 5), 4)
+
         
-        answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=getQuestion()[1]).grid(row=ycoordinates[0], column=0)
-        answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=getQuestion()[2]).grid(row=ycoordinates[1], column=0)
-        answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=getQuestion()[3]).grid(row=ycoordinates[2], column=0)
-        correctButton = tk.Button(self.MainFrame,command=lambda:displayMessage("Correct"), text=getQuestion()[4]).grid(row=ycoordinates[3], column=0)
+        answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[1]).grid(row=ycoordinates[0], column=0)
+        answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[2]).grid(row=ycoordinates[1], column=0)
+        answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=question[3]).grid(row=ycoordinates[2], column=0)
+        correctButton = tk.Button(self.MainFrame,command=lambda:displayMessage("Correct"), text=question[4]).grid(row=ycoordinates[3], column=0)
         self.MainFrame.pack()
 
     def practiceMenu(self):
