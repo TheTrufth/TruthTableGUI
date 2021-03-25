@@ -1,0 +1,4 @@
+QUESTION,ANSWER1,ANSWER2,ANSWER3,CORRECT
+¬(N ∧ ¬P ) where N = "I will go" and P = "you will go",I will go without you,I will go and you will too,I will not go if you go,I wont go without you
+¬Q → R where Q  ="It will rain soon" and R ="Crop will fail",It is going to rain,It is going to rain and the crop will fail,The crop is going to fail,Unless it rains soon the crop will fail
+B ∧ ¬C where B = "there is smoke" and C = "there is fire",There is always fire when there is no smoke,There is fire or there is smoke,There is fire and smoke,It is not true that there’s no smoke without fire

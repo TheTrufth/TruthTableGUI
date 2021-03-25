@@ -72,7 +72,7 @@ class MainApplication(tk.Frame):
         elif x == 1:
             self.calculatorMenu()
         elif x == 2:
-            self.practiceMenu()
+            self.EnglishTranslationActivity()
         elif x == 3:
             self.learnMenu()
         elif x == 4:
@@ -200,6 +200,48 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
 
+
+    def EnglishTranslationActivity(self):
+        def getQuestionAndAnswers():
+            import pandas as pd
+            df = pd.read_csv('QandA.csv')
+            questions = df['QUESTION'].to_list()
+            answer1 = df['ANSWER1'].to_list()
+            answer2 = df['ANSWER2'].to_list()
+            answer3 = df['ANSWER3'].to_list()
+            correct = df['CORRECT'].to_list()
+            return questions, answer1, answer2, answer3, correct
+
+        def getQuestion():
+            import random 
+            rand_index = random.randint(0,len(getQuestionAndAnswers()[0])-1)
+            question = getQuestionAndAnswers()[0][rand_index]
+            answer1 = getQuestionAndAnswers()[1][rand_index]
+            answer2 = getQuestionAndAnswers()[2][rand_index]
+            answer3 = getQuestionAndAnswers()[3][rand_index]
+            correct = getQuestionAndAnswers()[4][rand_index]
+            return question, answer1,answer2,answer3,correct
+
+        self.MainFrame = tk.Frame(self.parent)
+        label = tk.Label(self.MainFrame,text=getQuestion()[0]).grid(row=0, column=0)
+        
+        def displayMessage(_str):
+            popup = tk.Tk()
+            label = ttk.Label(popup, text=_str)
+            label.pack(side="top", fill="x", pady=10)
+            B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
+            B1.pack()
+            popup.mainloop()
+
+        import random
+        ycoordinates = random.sample(range(1, 5), 4)
+        
+        answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=getQuestion()[1]).grid(row=ycoordinates[0], column=0)
+        answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=getQuestion()[2]).grid(row=ycoordinates[1], column=0)
+        answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=getQuestion()[3]).grid(row=ycoordinates[2], column=0)
+        correctButton = tk.Button(self.MainFrame,command=lambda:displayMessage("Correct"), text=getQuestion()[4]).grid(row=ycoordinates[3], column=0)
+        self.MainFrame.pack()
+
     def practiceMenu(self):
         def updateExpr(value):
             expr.set(expr.get() + str(value))
@@ -274,6 +316,7 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
 
+    
     def learnMenu(self):
         def nextSlide(var, counter, slides, button):
             var.set(var.get() + "\n\n" + slides[counter.get()])
