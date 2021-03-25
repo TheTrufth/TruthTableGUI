@@ -7,6 +7,7 @@ from tkinter import ttk as ttk
 from truthtable import create, unpack, print_result, wo, ow, zx, xz, kl
 import data_generation as dg
 from sympy import sympify, srepr
+from sympy.logic import simplify_logic
 varList = ['A', 'B', 'C', 'D', 'E', 'F', 'P', 'Q', 'R', 'S', 'X', 'U']
 IntroductionSlides = ["• Propositional logic is one of the simplest logics and is in universal usage.",
                       "• Formulas are built up from atomic propositions (factual statements) using logical connectives:",
@@ -90,7 +91,7 @@ class MainApplication(tk.Frame):
         ''' To Infix Notation '''
         def toInfix(expr):
             # TT.wo(A,B)
-            exprr = srepr(sympify(expr))
+            exprr = srepr(simplify_logic(sympify(expr)))
             exprr = exprr.replace("Symbol", "")
             exprr = exprr.replace("'", "")
             print(exprr)
@@ -250,7 +251,7 @@ class MainApplication(tk.Frame):
 
 
         def isDNF(prop_formula):
-            if dg.check_if_dnf(prop_formula, expr.get()) == False:
+            if dg.check_if_dnf(simplify_logic(prop_formula), simplify_logic(expr.get())) == False:
                 popup = tk.Tk()
                 popup.wm_title("Incorrect")
                 label = ttk.Label(popup, text="The formula you entered was not the correct DNF")
