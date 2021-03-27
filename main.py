@@ -80,7 +80,10 @@ class MainApplication(tk.Frame):
 
     def calculatorMenu(self):
         def updateExpr(value):
-            exprView.set(exprView.get() + str(value))
+            if value == "↔":
+                exprView.set("Equivalent(" + exprView.get() + ", ")
+            else:
+                exprView.set(exprView.get() + str(value))
 
         def clearExpr():
             exprView.set("")
@@ -91,15 +94,15 @@ class MainApplication(tk.Frame):
         ''' To Infix Notation '''
         def toInfix(expr):
             # TT.wo(A,B)
-            exprr = srepr(simplify_logic(sympify(expr)))
+            exprr = srepr(sympify(expr))
             exprr = exprr.replace("Symbol", "")
             exprr = exprr.replace("'", "")
-            print(exprr)
+            print("Infix_expr:", exprr)
 
             exprr = exprr.replace("And", "wo")
             exprr = exprr.replace("Or", "ow")
             exprr = exprr.replace("Not", "zx")
-            exprr = exprr.replace("Equiv", "xz")
+            exprr = exprr.replace("Equivalent", "xz")
             exprr = exprr.replace("Implies", "kl")
             colNames = []
             for char in exprr:
@@ -159,8 +162,9 @@ class MainApplication(tk.Frame):
                                                                                                    column=2)
         tk.Button(buttonFrame, text="→", width=10, height=3, command=lambda: updateExpr(">>")).grid(
             row=2, column=3)
-        tk.Button(buttonFrame, text="↔", width=10, height=3, command=lambda: updateExpr("↔")).grid(row=2,
-                                                                                                   column=4)
+        tk.Button(buttonFrame, text="↔", width=10, height=3, command=lambda: updateExpr("↔")).grid(
+            row=2, column=3)
+
 
         # LBRACKET AND RBRACKET / Haven't implemented this yet
         lbracketButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(
@@ -195,54 +199,34 @@ class MainApplication(tk.Frame):
 
         tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get())).grid(
             row=6, column=1)
+        tk.Button(self.CalculatorMenuFrame, text="CNF FORM", command=lambda: convertToCNF(exprView.get())).grid(
+            row=6, column=2)
+        toDnfButton = tk.Button(self.CalculatorMenuFrame, text="DNF FORM", command=lambda: convertToDNF(exprView.get())).grid(row=6,
+                                                                                                         column=3)
         tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
             row=6, column=0)
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
 
-
-    def EnglishTranslationActivity(self):
-        def getQuestionAndAnswers():
-            import pandas as pd
-            df = pd.read_csv('QandA.csv')
-            questions = df['QUESTION'].to_list()
-            answer1 = df['ANSWER1'].to_list()
-            answer2 = df['ANSWER2'].to_list()
-            answer3 = df['ANSWER3'].to_list()
-            correct = df['CORRECT'].to_list()
-            return questions, answer1, answer2, answer3, correct
-
-        def getQuestion():
-            import random 
-            rand_index = random.randint(0,len(getQuestionAndAnswers()[0])-1)
-            question = getQuestionAndAnswers()[0][rand_index]
-            answer1 = getQuestionAndAnswers()[1][rand_index]
-            answer2 = getQuestionAndAnswers()[2][rand_index]
-            answer3 = getQuestionAndAnswers()[3][rand_index]
-            correct = getQuestionAndAnswers()[4][rand_index]
-            return question, answer1,answer2,answer3,correct
-
-        self.MainFrame = tk.Frame(self.parent)
-        question = getQuestion()
-        label = tk.Label(self.MainFrame,text=question[0]).grid(row=0, column=0)
-        
-        def displayMessage(_str):
-            popup = tk.Tk()
-            label = ttk.Label(popup, text=_str)
+        def convertToCNF(expr):
+            answer1 = "CNF form of ",expr,"  is  ", to_cnf(expr)
+            cnfWindow = tk.Tk()
+            cnfWindow.wm_title("CNF form")
+            label = ttk.Label(cnfWindow, text = answer1)
             label.pack(side="top", fill="x", pady=10)
-            B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
-            B1.pack()
-            popup.mainloop()
+            Button1 = ttk.Button(cnfWindow, text="Done", command=cnfWindow.destroy)
+            Button1.pack()
+            cnfWindow.mainloop()
 
-        import random
-        ycoordinates = random.sample(range(1, 5), 4)
-
-        
-        answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[1]).grid(row=ycoordinates[0], column=0)
-        answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[2]).grid(row=ycoordinates[1], column=0)
-        answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=question[3]).grid(row=ycoordinates[2], column=0)
-        correctButton = tk.Button(self.MainFrame,command=lambda:displayMessage("Correct"), text=question[4]).grid(row=ycoordinates[3], column=0)
-        self.MainFrame.pack()
+        def convertToDNF(expr):
+            answer2 = "DNF form of ",expr,"  is  ", to_dnf(expr)
+            dnfWindow = tk.Tk()
+            dnfWindow.wm_title("DNF form")
+            label = ttk.Label(dnfWindow, text = answer2)
+            label.pack(side="top", fill="x", pady=10)
+            Button2 = ttk.Button(dnfWindow, text="Done", command=dnfWindow.destroy)
+            Button2.pack()
+            dnfWindow.mainloop()
 
     def practiceMenu(self):
         def updateExpr(value):
