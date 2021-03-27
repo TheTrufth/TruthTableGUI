@@ -8,6 +8,8 @@ from truthtable import create, unpack, print_result, wo, ow, zx, xz, kl
 import data_generation as dg
 from sympy import sympify, srepr
 from sympy.logic import simplify_logic
+from sympy.logic.boolalg import to_dnf, to_cnf
+
 varList = ['A', 'B', 'C', 'D', 'E', 'F', 'P', 'Q', 'R', 'S', 'X', 'U']
 IntroductionSlides = ["• Propositional logic is one of the simplest logics and is in universal usage.",
                       "• Formulas are built up from atomic propositions (factual statements) using logical connectives:",
@@ -140,11 +142,12 @@ class MainApplication(tk.Frame):
                 listBox.insert("", "end", values=(c))
 
         def workOut(expr):
+            CNFanswer.set("CNF Form: " + str(to_cnf(expr)))
+            DNFanswer.set("     DNF Form: " + str(to_dnf(expr)))
             s, colName = toInfix(expr)
             displayTable(s, tuple(colName))
 
-        exprView = tk.StringVar()
-        exprView.set("")
+        exprView = tk.StringVar(value="")
         self.CalculatorMenuFrame = tk.Frame(self.parent)
 
         tk.Label(self.CalculatorMenuFrame, text="Welcome to calculator menu").grid(row=0, column=0)
@@ -152,6 +155,7 @@ class MainApplication(tk.Frame):
         tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
         tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1, column=3)
 
+        dnfcnfFrame = tk.Frame(self.parent)
         buttonFrame = tk.Frame(self.parent)
 
         tk.Button(buttonFrame, text="¬", width=10, height=3, command=lambda: updateExpr("~")).grid(row=2,
@@ -163,7 +167,7 @@ class MainApplication(tk.Frame):
         tk.Button(buttonFrame, text="→", width=10, height=3, command=lambda: updateExpr(">>")).grid(
             row=2, column=3)
         tk.Button(buttonFrame, text="↔", width=10, height=3, command=lambda: updateExpr("↔")).grid(
-            row=2, column=3)
+            row=2, column=4)
 
 
         # LBRACKET AND RBRACKET / Haven't implemented this yet
@@ -199,20 +203,25 @@ class MainApplication(tk.Frame):
 
         tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get())).grid(
             row=6, column=1)
-        tk.Button(self.CalculatorMenuFrame, text="CNF FORM", command=lambda: convertToCNF(exprView.get())).grid(
-            row=6, column=2)
-        toDnfButton = tk.Button(self.CalculatorMenuFrame, text="DNF FORM", command=lambda: convertToDNF(exprView.get())).grid(row=6,
-                                                                                                         column=3)
+        
+        CNFanswer = tk.StringVar(value="CNF Form: ")
+        DNFanswer = tk.StringVar(value="DNF Form: ")
+        tk.Label(dnfcnfFrame, textvariable=CNFanswer).grid(row=1, column=0)
+        tk.Label(dnfcnfFrame, textvariable=DNFanswer).grid(row=1, column=3)
+
+    
         tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
             row=6, column=0)
         self.CalculatorMenuFrame.pack()
+        dnfcnfFrame.pack()
         buttonFrame.pack()
+        
 
         def convertToCNF(expr):
-            answer1 = "CNF form of ",expr,"  is  ", to_cnf(expr)
+            answer1 = "CNF form of ", expr,"  is  ", to_cnf(expr)
             cnfWindow = tk.Tk()
             cnfWindow.wm_title("CNF form")
-            label = ttk.Label(cnfWindow, text = answer1)
+            label = ttk.Label(cnfWindow, text=answer1)
             label.pack(side="top", fill="x", pady=10)
             Button1 = ttk.Button(cnfWindow, text="Done", command=cnfWindow.destroy)
             Button1.pack()
