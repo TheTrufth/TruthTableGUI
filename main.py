@@ -1,6 +1,7 @@
 '''
 Important!
 pip3 install sympy
+pip3 install pandas
 '''
 import tkinter as tk
 from tkinter import ttk as ttk
@@ -247,7 +248,6 @@ class MainApplication(tk.Frame):
             answer3 = df['ANSWER3'].to_list()
             correct = df['CORRECT'].to_list()
             return questions, answer1, answer2, answer3, correct
-
         def getQuestion():
             import random 
             rand_index = random.randint(0,len(getQuestionAndAnswers()[0])-1)
@@ -257,29 +257,37 @@ class MainApplication(tk.Frame):
             answer3 = getQuestionAndAnswers()[3][rand_index]
             correct = getQuestionAndAnswers()[4][rand_index]
             return question, answer1,answer2,answer3,correct
-
-        self.MainFrame = tk.Frame(self.parent)
-        question = getQuestion()
-        label = tk.Label(self.MainFrame,text=question[0]).grid(row=0, column=0)
-        
         def displayMessage(_str):
             popup = tk.Tk()
             label = ttk.Label(popup, text=_str)
             label.pack(side="top", fill="x", pady=10)
-            B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
+            B1 = ttk.Button(popup, text="Try again", command=(popup.destroy))
             B1.pack()
             popup.mainloop()
 
+        def correct():
+            popup = tk.Tk()
+            label = ttk.Label(popup, text="Correct! \n you will now go onto another question")
+            label.pack(side="top", fill="x", pady=10)
+            self.goto_x_Menu(2)
+            popup.mainloop()
+
+            
+
+        self.MainFrame = tk.Frame(self.parent)
+        question = getQuestion()
+        label = tk.Label(self.MainFrame,text=question[0]).grid(row=0, column=0)
         import random
         ycoordinates = random.sample(range(1, 5), 4)
-
-        
         answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[1]).grid(row=ycoordinates[0], column=0)
         answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[2]).grid(row=ycoordinates[1], column=0)
         answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=question[3]).grid(row=ycoordinates[2], column=0)
-        correctButton = tk.Button(self.MainFrame,command=lambda:displayMessage("Correct"), text=question[4]).grid(row=ycoordinates[3], column=0)
+        correctButton = tk.Button(self.MainFrame,command=lambda:correct(), text=question[4]).grid(row=ycoordinates[3], column=0)
+        tk.Button(self.MainFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=7, column=2)
         self.MainFrame.pack()
 
+
+    
     def practiceMenu(self):
         def updateExpr(value):
             expr.set(expr.get() + str(value))
