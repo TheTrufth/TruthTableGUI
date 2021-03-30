@@ -277,7 +277,7 @@ class MainApplication(tk.Frame):
             popup = tk.Tk()
             label = ttk.Label(popup, text="Correct! \n you will now go onto another question")
             label.pack(side="top", fill="x", pady=10)
-            self.goto_x_Menu(2)
+            self.goto_x_Menu(5)
             popup.mainloop()
 
             
