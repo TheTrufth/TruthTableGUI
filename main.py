@@ -186,7 +186,7 @@ class MainApplication(tk.Frame):
         
 
         #self.fn = tk.PhotoImage(file=r"pics/blank background.png")
-        self.fn = ImageTk.PhotoImage(Image.open("pics/blank background.png").resize((1200, 719), Image.ANTIALIAS))
+        self.fn = ImageTk.PhotoImage(Image.open("pics/background-with-penguin.png").resize((1200, 719), Image.ANTIALIAS))
         self.canvas.background = self.fn
         self.bg = self.canvas.create_image(0, 0, anchor=tk.NW, image=self.fn)
 
