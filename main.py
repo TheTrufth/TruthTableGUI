@@ -75,11 +75,17 @@ class MainApplication(tk.Frame):
         elif x == 1:
             self.calculatorMenu()
         elif x == 2:
-            self.EnglishTranslationActivity()
+            self.PracticeSubMenu()
         elif x == 3:
             self.learnMenu()
         elif x == 4:
             self.loadAccount()
+        elif x == 5:
+            self.EnglishTranslationActivity()
+        elif x==6:
+            self.practiceDNF()
+        elif x == 7:
+            self.practiceCNF()
 
     def calculatorMenu(self):
         def updateExpr(value):
@@ -238,6 +244,13 @@ class MainApplication(tk.Frame):
             Button2.pack()
             dnfWindow.mainloop()
     
+    def PracticeSubMenu(self):
+        self.PracticeSubMenuFrame = tk.Frame(self.parent)
+        DNFButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(6), text="practice converting Propositional formula to CNF").grid(row=1, column=0)
+        CNFButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(7), text="practice convreting Propositional formula to DNF").grid(row=2, column=0)
+        EnglishButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(5),text="practice converting Propositional formula to English sentence").grid(row=3, column=0)
+        self.PracticeSubMenuFrame.pack()        
+
     def EnglishTranslationActivity(self):
         def getQuestionAndAnswers():
             import pandas as pd
@@ -264,7 +277,6 @@ class MainApplication(tk.Frame):
             B1 = ttk.Button(popup, text="Try again", command=(popup.destroy))
             B1.pack()
             popup.mainloop()
-
         def correct():
             popup = tk.Tk()
             label = ttk.Label(popup, text="Correct! \n you will now go onto another question")
@@ -274,21 +286,21 @@ class MainApplication(tk.Frame):
 
             
 
-        self.MainFrame = tk.Frame(self.parent)
+        self.EnglishFrame = tk.Frame(self.parent)
         question = getQuestion()
-        label = tk.Label(self.MainFrame,text=question[0]).grid(row=0, column=0)
+        label = tk.Label(self.EnglishFrame,text=question[0]).grid(row=0, column=0)
         import random
         ycoordinates = random.sample(range(1, 5), 4)
-        answer1Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[1]).grid(row=ycoordinates[0], column=0)
-        answer2Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"), text=question[2]).grid(row=ycoordinates[1], column=0)
-        answer3Button = tk.Button(self.MainFrame,command=lambda:displayMessage("Incorrect"),text=question[3]).grid(row=ycoordinates[2], column=0)
-        correctButton = tk.Button(self.MainFrame,command=lambda:correct(), text=question[4]).grid(row=ycoordinates[3], column=0)
-        tk.Button(self.MainFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=7, column=2)
-        self.MainFrame.pack()
+        answer1Button = tk.Button(self.EnglishFrame,command=lambda:displayMessage("Incorrect"), text=question[1]).grid(row=ycoordinates[0], column=0)
+        answer2Button = tk.Button(self.EnglishFrame,command=lambda:displayMessage("Incorrect"), text=question[2]).grid(row=ycoordinates[1], column=0)
+        answer3Button = tk.Button(self.EnglishFrame,command=lambda:displayMessage("Incorrect"),text=question[3]).grid(row=ycoordinates[2], column=0)
+        correctButton = tk.Button(self.EnglishFrame,command=lambda:correct(), text=question[4]).grid(row=ycoordinates[3], column=0)
+        tk.Button(self.EnglishFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=7, column=2)
+        self.EnglishFrame.pack()
 
 
     
-    def practiceMenu(self):
+    def practiceDNF(self):
         def updateExpr(value):
             expr.set(expr.get() + str(value))
 
@@ -362,7 +374,81 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
 
-    
+    def practiceCNF(self):
+        def updateExpr(value):
+            expr.set(expr.get() + str(value))
+
+        def clearExpr():
+            expr.set("")
+
+        def delExpr():
+            expr.set(expr.get()[:-1])
+
+        expr = tk.StringVar()
+        expr.set("")
+        self.CalculatorMenuFrame = tk.Frame(self.parent)
+
+        prop_formula = dg.get_prop_formula()
+        print(dg.convertToCNF(prop_formula))
+
+        HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
+        prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
+        Entry = tk.Entry(self.CalculatorMenuFrame, width=80, textvariable=expr).grid(row=1, column=1)
+        delButton = tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
+        clearButton = tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1,
+                                                                                                          column=3)
+
+        buttonFrame = tk.Frame(self.parent)
+
+        andButton = tk.Button(buttonFrame, text="&", width=10, height=3, command=lambda: updateExpr("&")).grid(row=2,
+                                                                                                               column=1)
+        orButton = tk.Button(buttonFrame, text="|", width=10, height=3, command=lambda: updateExpr("|")).grid(row=2,
+                                                                                                              column=2)
+
+        # SECONADRY VARIABLES
+        aVarButton = tk.Button(buttonFrame, text="A", width=10, height=3, command=lambda: updateExpr("A")).grid(row=5,
+                                                                                                                column=0)
+        bVarButton = tk.Button(buttonFrame, text="B", width=10, height=3, command=lambda: updateExpr("B")).grid(row=5,
+                                                                                                                column=1)
+        cVarButton = tk.Button(buttonFrame, text="C", width=10, height=3, command=lambda: updateExpr("C")).grid(row=5,
+                                                                                                                column=2)
+        notaVarButton = tk.Button(buttonFrame, text="~A", width=10, height=3, command=lambda: updateExpr("~A")).grid(
+            row=6, column=0)
+        notbVarButton = tk.Button(buttonFrame, text="~B", width=10, height=3, command=lambda: updateExpr("~B")).grid(
+            row=6, column=1)
+        notcVarButton = tk.Button(buttonFrame, text="~C", width=10, height=3, command=lambda: updateExpr("~C")).grid(
+            row=6, column=2)
+        lparenButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(
+            row=6, column=3)
+        rparenButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(
+            row=6, column=4)
+
+
+        def isCNF(prop_formula):
+            if dg.check_if_cnf(simplify_logic(prop_formula), simplify_logic(expr.get())) == False:
+                popup = tk.Tk()
+                popup.wm_title("Incorrect")
+                label = ttk.Label(popup, text="The formula you entered was not the correct CNF")
+                label.pack(side="top", fill="x", pady=10)
+                B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
+                B1.pack()
+                popup.mainloop()
+            else:
+                popup = tk.Tk()
+                popup.wm_title("Correct")
+                label = ttk.Label(popup, text="you have successfully entered the correct CNF")
+                label.pack(side="top", fill="x", pady=10)
+                B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
+                B1.pack()
+                popup.mainloop()
+
+        submitButton = tk.Button(self.CalculatorMenuFrame, text="Submit", command=lambda: isCNF(prop_formula)).grid(row=6, column=1)
+        goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
+            row=6, column=0)
+        self.CalculatorMenuFrame.pack()
+        buttonFrame.pack()
+
+
     def learnMenu(self):
         def nextSlide(var, counter, slides, button):
             var.set(var.get() + "\n\n" + slides[counter.get()])
@@ -411,7 +497,6 @@ class MainApplication(tk.Frame):
 
         goBackButton = tk.Button(self.LearnMenuFrame, text="Go Back To Main Menu",
                                  command=lambda: self.goto_x_Menu(0)).grid(row=1, column=0)
-
         self.LearnMenuFrame.pack()
 
     def loadAccount(self):
