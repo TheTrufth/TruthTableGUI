@@ -315,7 +315,7 @@ class MainApplication(tk.Frame):
 
         HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
         prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
-        Entry = tk.Entry(self.CalculatorMenuFrame, width=80, textvariable=expr).grid(row=1, column=1)
+        Entry = tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=expr).grid(row=1, column=1)
         delButton = tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
         clearButton = tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1,
                                                                                                           column=3)
@@ -357,12 +357,12 @@ class MainApplication(tk.Frame):
                 popup.mainloop()
             else:
                 popup = tk.Tk()
-                popup.wm_title("Correct")
+                #popup.wm_title("Correct")
                 label = ttk.Label(popup, text="you have successfully entered the correct DNF")
                 label.pack(side="top", fill="x", pady=10)
-                B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
-                B1.pack()
+                self.goto_x_Menu(6)
                 popup.mainloop()
+                
 
         submitButton = tk.Button(self.CalculatorMenuFrame, text="Submit", command=lambda: isDNF(prop_formula)).grid(row=6, column=1)
         goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
@@ -389,7 +389,7 @@ class MainApplication(tk.Frame):
 
         HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
         prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
-        Entry = tk.Entry(self.CalculatorMenuFrame, width=80, textvariable=expr).grid(row=1, column=1)
+        Entry = tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=expr).grid(row=1, column=1)
         delButton = tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
         clearButton = tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1,
                                                                                                           column=3)
@@ -431,16 +431,14 @@ class MainApplication(tk.Frame):
                 popup.mainloop()
             else:
                 popup = tk.Tk()
-                popup.wm_title("Correct")
                 label = ttk.Label(popup, text="you have successfully entered the correct CNF")
                 label.pack(side="top", fill="x", pady=10)
-                B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
                 B1.pack()
+                self.goto_x_Menu(7)
                 popup.mainloop()
-
+                
         submitButton = tk.Button(self.CalculatorMenuFrame, text="Submit", command=lambda: isCNF(prop_formula)).grid(row=6, column=1)
-        goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
-            row=6, column=0)
+        goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=6, column=0)
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
 
