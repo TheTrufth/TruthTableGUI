@@ -2,10 +2,12 @@
 Important!
 pip3 install sympy
 pip3 install pandas
+pip3 install Pillow
 '''
 import tkinter as tk
 from tkinter import ttk as ttk
 from truthtable import create, unpack, print_result, wo, ow, zx, xz, kl
+from PIL import Image, ImageTk
 import data_generation as dg
 from sympy import sympify, srepr
 from sympy.logic import simplify_logic
@@ -48,18 +50,41 @@ class MainApplication(tk.Frame):
 
     def mainMenu(self):
         ''' Main Menu '''
-        self.MenuFrame = tk.Frame(self.parent)
-        tk.Label(self.MenuFrame, text="Select option").grid(row=0, column=1)
+        #1000, 500
+        self.canvas = tk.Canvas(self.parent, width=1200, height=719)
+        self.canvas.pack()
+
+        self.MenuFrame = tk.Frame(self.canvas)
+        
+
+        #self.fn = tk.PhotoImage(file=r"pics/blank background.png")
+        self.fn = ImageTk.PhotoImage(Image.open("pics/home.png").resize((1200, 719), Image.ANTIALIAS))
+        self.canvas.background = self.fn
+        self.bg = self.canvas.create_image(0, 0, anchor=tk.NW, image=self.fn)
+        
+        # 62:height  515:width  // Buttons:  610:width  168:height
+        # 239:height 2031:width // New Buttons: 549:width 161:height
+
+        
+        # 1200x719
+        # 1080x647 
+        #self.CalculatorMenuLogo = ImageTk.PhotoImage(Image.open("pics/CalculatorMenuLogo.png").resize((439, 128), Image.ANTIALIAS))
         self.CalculatorMenuLogo = tk.PhotoImage(file=r"pics/CalculatorMenuLogo.png")
         self.PracticeMenuLogo = tk.PhotoImage(file=r"pics/PracticeMenuLogo.png")
         self.LearnMenuLogo = tk.PhotoImage(file=r"pics/LearnMenuLogo.png")
+        self.TestMenuLogo = tk.PhotoImage(file=r"pics/TestMenuLogo.png")
+
         tk.Button(self.MenuFrame, text="Calculator", image=self.CalculatorMenuLogo,
-                  command=lambda: self.goto_x_Menu(1)).grid(row=1, column=0)
+                  command=lambda: self.goto_x_Menu(1)).grid(row=2, column=0)
         tk.Button(self.MenuFrame, text="Practice", image=self.PracticeMenuLogo,
-                  command=lambda: self.goto_x_Menu(2)).grid(row=1, column=1)
+                  command=lambda: self.goto_x_Menu(2)).grid(row=2, column=1)
         tk.Button(self.MenuFrame, text="Learn", image=self.LearnMenuLogo,
-                  command=lambda: self.goto_x_Menu(3)).grid(row=1, column=2)
-        self.MenuFrame.pack()
+                  command=lambda: self.goto_x_Menu(3)).grid(row=3, column=0)
+        tk.Button(self.MenuFrame, text="Test", image=self.TestMenuLogo,
+                  command=lambda: self.goto_x_Menu(3)).grid(row=3, column=1)
+
+        #self.MenuFrame.pack()
+        button_window = self.canvas.create_window(300, 250, anchor=tk.NW, window=self.MenuFrame)
 
     def clearwin(self):
         '''Clear everything on screen'''
@@ -150,16 +175,28 @@ class MainApplication(tk.Frame):
             s, colName = toInfix(expr)
             displayTable(s, tuple(colName))
 
+        
         exprView = tk.StringVar(value="")
-        self.CalculatorMenuFrame = tk.Frame(self.parent)
 
-        tk.Label(self.CalculatorMenuFrame, text="Welcome to calculator menu").grid(row=0, column=0)
-        tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=exprView).grid(row=1, column=1)
-        tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr()).grid(row=1, column=2)
-        tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr()).grid(row=1, column=3)
+        self.canvas = tk.Canvas(self.parent, width=1200, height=719)
+        self.canvas.pack()
+        BgColor = '#ded9e2'
 
-        dnfcnfFrame = tk.Frame(self.parent)
-        buttonFrame = tk.Frame(self.parent)
+        self.CalculatorMenuFrame = tk.Frame(self.canvas, bg=BgColor)
+        
+
+        #self.fn = tk.PhotoImage(file=r"pics/blank background.png")
+        self.fn = ImageTk.PhotoImage(Image.open("pics/blank background.png").resize((1200, 719), Image.ANTIALIAS))
+        self.canvas.background = self.fn
+        self.bg = self.canvas.create_image(0, 0, anchor=tk.NW, image=self.fn)
+
+        tk.Label(self.CalculatorMenuFrame, text="Welcome to calculator menu", bg=BgColor).grid(row=0, column=0)
+        tk.Entry(self.CalculatorMenuFrame, state="readonly", width=80, textvariable=exprView, highlightbackground=BgColor).grid(row=1, column=1)
+        tk.Button(self.CalculatorMenuFrame, text="DEL", command=lambda: delExpr(), highlightbackground=BgColor).grid(row=1, column=2)
+        tk.Button(self.CalculatorMenuFrame, text="CLEAR", command=lambda: clearExpr(), highlightbackground=BgColor).grid(row=1, column=3)
+
+        dnfcnfFrame = tk.Frame(self.canvas, bg=BgColor)
+        buttonFrame = tk.Frame(self.canvas, bg=BgColor)
 
         tk.Button(buttonFrame, text="¬", width=10, height=3, command=lambda: updateExpr("~")).grid(row=2,
                                                                                                    column=0)
@@ -204,20 +241,30 @@ class MainApplication(tk.Frame):
                                                                                                    column=4)
 
 
-        tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get())).grid(
+        tk.Button(self.CalculatorMenuFrame, text="SUBMIT", command=lambda: workOut(exprView.get()), highlightbackground=BgColor).grid(
             row=6, column=1)
         
         CNFanswer = tk.StringVar(value="CNF Form: ")
         DNFanswer = tk.StringVar(value="DNF Form: ")
-        tk.Label(dnfcnfFrame, textvariable=CNFanswer).grid(row=1, column=0)
-        tk.Label(dnfcnfFrame, textvariable=DNFanswer).grid(row=1, column=3)
+        tk.Label(dnfcnfFrame, textvariable=CNFanswer, bg=BgColor).grid(row=1, column=0)
+        tk.Label(dnfcnfFrame, textvariable=DNFanswer, bg=BgColor).grid(row=1, column=3)
 
-    
-        tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(
-            row=6, column=0)
-        self.CalculatorMenuFrame.pack()
-        dnfcnfFrame.pack()
-        buttonFrame.pack()
+        self.BackLogo = ImageTk.PhotoImage(Image.open("pics/back.png").resize((100, 60), Image.ANTIALIAS))
+
+        tk.Button(self.CalculatorMenuFrame, text="Go Back", image=self.BackLogo,
+                  command=lambda: self.goto_x_Menu(0)).grid(row=9, column=0)
+
+        
+        #tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0), highlightbackground=BgColor).grid(
+            #row=6, column=0)
+        #self.CalculatorMenuFrame.pack()
+        
+        self.canvas.create_window(80, 100, anchor=tk.NW, window=self.CalculatorMenuFrame)
+        self.canvas.create_window(350, 200, anchor=tk.NW, window=dnfcnfFrame)
+        self.canvas.create_window(350, 250, anchor=tk.NW, window=buttonFrame)
+
+
+
         
 
         def convertToCNF(expr):
@@ -311,7 +358,7 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame = tk.Frame(self.parent)
 
         prop_formula = dg.get_prop_formula()
-        print(dg.convertToDNF(prop_formula))
+        
 
         HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
         prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
@@ -504,5 +551,6 @@ class MainApplication(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.geometry('{}x{}'.format(1200, 719))
     MainApplication(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
