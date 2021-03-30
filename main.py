@@ -59,8 +59,6 @@ class MainApplication(tk.Frame):
                   command=lambda: self.goto_x_Menu(2)).grid(row=1, column=1)
         tk.Button(self.MenuFrame, text="Learn", image=self.LearnMenuLogo,
                   command=lambda: self.goto_x_Menu(3)).grid(row=1, column=2)
-        tk.Button(self.MenuFrame, text="LOAD ACCOUNT", command=lambda: self.goto_x_Menu(4)).grid(
-            row=2, column=0)
         self.MenuFrame.pack()
 
     def clearwin(self):
@@ -78,8 +76,6 @@ class MainApplication(tk.Frame):
             self.PracticeSubMenu()
         elif x == 3:
             self.learnMenu()
-        elif x == 4:
-            self.loadAccount()
         elif x == 5:
             self.EnglishTranslationActivity()
         elif x==6:
@@ -247,7 +243,7 @@ class MainApplication(tk.Frame):
     def PracticeSubMenu(self):
         self.PracticeSubMenuFrame = tk.Frame(self.parent)
         DNFButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(6), text="practice converting Propositional formula to CNF").grid(row=1, column=0)
-        CNFButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(7), text="practice convreting Propositional formula to DNF").grid(row=2, column=0)
+        CNFButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(7), text="practice converting Propositional formula to DNF").grid(row=2, column=0)
         EnglishButton = tk.Button(self.PracticeSubMenuFrame,command=lambda:self.goto_x_Menu(5),text="practice converting Propositional formula to English sentence").grid(row=3, column=0)
         self.PracticeSubMenuFrame.pack()        
 
