@@ -491,44 +491,74 @@ class MainApplication(tk.Frame):
 
 
     def learnMenu(self):
+        '''
         def nextSlide(var, counter, slides, button):
             var.set(var.get() + "\n\n" + slides[counter.get()])
             counter.set(counter.get() + 1)
             if counter.get() == len(slides):
                 button['state'] = tk.DISABLED
+        '''
+
+        def nextSlide(lessonLabel, lesson, lessonp1, lessonb, lessonf):
+            if lessonLabel.image == lesson:
+                lessonLabel.configure(image=lessonp1)
+                lessonLabel.image = lessonp1
+                lessonb.config(state='normal')
+                lessonf.config(state='disabled')
+            else:
+                lessonLabel.configure(image=lesson)
+                lessonLabel.image = lesson
+                lessonb.config(state='disabled')
+                lessonf.config(state='normal')
 
         self.LearnMenuFrame = tk.Frame(self.parent)
         learnFrame = tk.LabelFrame(self.parent, text="Topics")
         tabs = ttk.Notebook(learnFrame)
 
+        self.BackLogo = ImageTk.PhotoImage(Image.open("pics/back.png").resize((100, 60), Image.ANTIALIAS))
+        self.ForwardLogo = ImageTk.PhotoImage(Image.open("pics/forward.png").resize((100, 60), Image.ANTIALIAS))
+
         tab1 = ttk.Frame(tabs)
-        l1text = tk.StringVar(value="Lesson 1: Introduction \nWhat is propositional logic?")
-        l1index = tk.IntVar()
-        tk.Label(tab1, textvariable=l1text, bg='#ececec').grid(column=0, row=0)
-        nextL1B = tk.Button(tab1, text="NEXT", command=lambda: nextSlide(l1text, l1index, IntroductionSlides, nextL1B))
-        nextL1B.grid()
+        lesson1 = ImageTk.PhotoImage(Image.open("pics/lesson 1.0.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson1p1 = ImageTk.PhotoImage(Image.open("pics/lesson 1.1.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson1Label = tk.Label(tab1, image=lesson1)
+        lesson1Label.image = lesson1
+        lesson1Label.grid(row=0, column=0)
+        l1b = tk.Button(tab1, text="Previous", image=self.BackLogo, command=lambda: nextSlide(lesson1Label, lesson1, lesson1p1, l1b, l1f), state="disabled")
+        l1b.place(x=10, y=550)
+        l1f = tk.Button(tab1, text="Next", image=self.ForwardLogo, command=lambda: nextSlide(lesson1Label, lesson1, lesson1p1, l1b, l1f))
+        l1f.place(x=970, y=550)
+
 
         tab2 = ttk.Frame(tabs)
-        l2text = tk.StringVar(value="")
-        l2index = tk.IntVar()
-        tk.Label(tab2, textvariable=l2text, bg='#ececec').grid(column=0, row=0)
-        nextL2B = tk.Button(tab2, text="NEXT", command=lambda: nextSlide(l2text, l2index, Lesson2Slides, nextL2B))
-        nextL2B.grid()
+        lesson2 = ImageTk.PhotoImage(Image.open("pics/lesson 2.0.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson2p2 = ImageTk.PhotoImage(Image.open("pics/lesson 2.1.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson2Label = tk.Label(tab2, image=lesson2)
+        lesson2Label.image = lesson2
+        lesson2Label.grid(row=0, column=0)
+        l2b = tk.Button(tab2, text="Previous", image=self.BackLogo, command=lambda: nextSlide(lesson2Label, lesson2, lesson2p2, l2b, l2f), state="disabled")
+        l2b.place(x=10, y=550)
+        l2f = tk.Button(tab2, text="Next", image=self.ForwardLogo, command=lambda: nextSlide(lesson2Label, lesson2, lesson2p2, l2b, l2f))
+        l2f.place(x=970, y=550)
 
         tab3 = ttk.Frame(tabs)
-        l3text = tk.StringVar(value="")
-        l3index = tk.IntVar()
-        tk.Label(tab3, textvariable=l3text, bg='#ececec').grid(column=0, row=0)
-        nextL3B = tk.Button(tab3, text="NEXT", command=lambda: nextSlide(l3text, l3index, Lesson3Slides, nextL3B))
-        nextL3B.grid()
+        lesson3 = ImageTk.PhotoImage(Image.open("pics/lesson 3.1.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson3Label = tk.Label(tab3, image=lesson3)
+        lesson3Label.image = lesson3
+        lesson3Label.grid(row=0, column=0)
 
         tab4 = ttk.Frame(tabs)
-        l4text = tk.StringVar(value="")
-        l4index = tk.IntVar()
-        tk.Label(tab4, textvariable=l4text, bg='#ececec').grid(column=0, row=0)
-        nextL4B = tk.Button(tab4, text="NEXT", command=lambda: nextSlide(l4text, l4index, Lesson4Slides, nextL4B))
-        nextL4B.grid()
-
+        lesson4 = ImageTk.PhotoImage(Image.open("pics/lesson 4.0.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson4p4 = ImageTk.PhotoImage(Image.open("pics/lesson 4.1.png").resize((1090, 622), Image.ANTIALIAS))
+        lesson4Label = tk.Label(tab4, image=lesson4)
+        lesson4Label.image = lesson4
+        lesson4Label.grid(row=0, column=0)
+        l4b = tk.Button(tab4, text="Previous", image=self.BackLogo, command=lambda: nextSlide(lesson4Label, lesson4, lesson4p4, l4b, l4f), state="disabled")
+        l4b.place(x=10, y=550)
+        l4f = tk.Button(tab4, text="Next", image=self.ForwardLogo, command=lambda: nextSlide(lesson4Label, lesson4, lesson4p4, l4b, l4f))
+        l4f.place(x=970, y=550)
+        
+        
         tabs.add(tab1, text="Introduction")
         tabs.add(tab2, text="Syntax of formulas")
         tabs.add(tab3, text="Translating English to propositional logic")
@@ -539,15 +569,6 @@ class MainApplication(tk.Frame):
         goBackButton = tk.Button(self.LearnMenuFrame, text="Go Back To Main Menu",
                                  command=lambda: self.goto_x_Menu(0)).grid(row=1, column=0)
         self.LearnMenuFrame.pack()
-
-    def loadAccount(self):
-        self.LoadAccountFrame = tk.Frame(self.parent)
-        Label = tk.Label(self.LoadAccountFrame,
-                         text="Here you can load your account and get back where you left off").grid(row=0, column=0)
-        goBackButton = tk.Button(self.LoadAccountFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=1,
-                                                                                                                  column=0)
-        self.LoadAccountFrame.pack()
-
 
 if __name__ == "__main__":
     root = tk.Tk()
