@@ -9,38 +9,38 @@ from tkinter import ttk as ttk
 from truthtable import create, unpack, print_result, wo, ow, zx, xz, kl
 from PIL import Image, ImageTk
 import data_generation as dg
-from sympy import sympify, srepr
+from sympy import sympify, srepr, pretty
 from sympy.logic import simplify_logic
 from sympy.logic.boolalg import to_dnf, to_cnf
-
+import random
 varList = ['A', 'B', 'C', 'D', 'E', 'F', 'P', 'Q', 'R', 'S', 'X', 'U']
-IntroductionSlides = ["• Propositional logic is one of the simplest logics and is in universal usage.",
-                      "• Formulas are built up from atomic propositions (factual statements) using logical connectives:",
-                      "¬:NOT ∧:AND ∨:OR →:IMPLIES ↔:IF AND ONLY IF",
-                      "• Note that ¬ is unary (one argument) while the others are binary (two arguments).",
-                      "\n\n Propositions and connectives in English " "• Roughly speaking, propositions are the smallest factual statements in an English sentence.",
-                      "• Connectives connect propositions together. \nExamples are “and”, “but”, “or”, “either”, “if”, “unless”...",
-                      "• E.g., “If it’s raining I’ll stay in and eat pie”. \nPropositions are “it’s raining”, “I’ll stay in” and “I’ll eat pie”.",
-                      "• Not every English sentence can be interpreted this way! \n(Questions, commands, . . . )"]
-Lesson2Slides = ["• We assume an infinite set P, Q, R, . . . of proposition letters.",
-                 "• Formulas of propositional logic are given by the grammar:", "A ::= P,Q,R... (Proposition)",
-                 "    ¬A (Negation)", "    (A ∧ A) (Conjunction)", "    (A ∨ A) (Disjunction)",
-                 "    (A → A) (Implication)", "    (A ↔ A) (Equivalence)",
-                 "• We can drop outermost parentheses, \ne.g. (P → Q) ∨ R versus ((P → Q) ∨ R).",
-                 "• ¬ has greater precedence than other connectives: \n  ¬A ∨ B means (¬A) ∨ B."]
-Lesson3Slides = ["• “If it’s raining I will stay and eat pie” \n R→S∧P",
-                 "• “You’re getting in if you have a ticket” \nT→G",
-                 "• “You’re getting in only if you have a ticket” \nG→T",
-                 "• “You’re not getting in unless you have a ticket” \n¬T → ¬G or, equivalently, ¬G ∨ T",
-                 "\n“If it’s raining I’ll either stay in and eat pie, or take an Uber to the pub — provided that’s not too expensive, in which case I’ll get the bus there instead” \n R → ((S ∧ P) ∨ ((¬E → U) ∧ (E → B)))"]
-Lesson4Slides = ["Reminder: Classical principles",
-                 "Law of noncontradiction. Two directly contradictory statements cannot be true at the same time.\n⊢ ¬(A ∧ ¬A)",
-                 "Law of excluded middle. Every statement is either true or false. \n ⊢ A ∨ ¬A", "\nValuations",
-                 "• Let’s write L for the set of proposition letters in some formula A.",
-                 "• I will use values 1 and 0 to stand for “true” and “false” respectively.",
-                 "• A valuation v for A is then an interpretation of each letter in L as either true or false, i.e., a function: \n v : L ⟼ {0, 1}",
-                 "• Next we explain how a valuation for A determines its overall truth value."]
 
+class Question():
+    def __init__(self):
+        questionType = ["toCNF", "inCNFtoDNF", "toDNF", "inDNFtoCNF"]
+        x = random.randint(0, len(questionType) - 1)
+        self.type = questionType[x]
+        f = dg.get_prop_formula()
+        if x == 0:
+            self.question = "What is " + pretty(f) + " in CNF?"
+            self.answer = to_cnf(f)
+        elif x == 1:
+            f = to_cnf(f)
+            self.question = pretty(f) + " is in CNF,convert it to DNF"
+            self.answer = to_dnf(f)
+        if x == 2:
+            self.question = "What is " + pretty(f) + " in DNF?"
+            self.answer = to_dnf(f)
+        elif x == 3:
+            f = to_dnf(f)
+            self.question = pretty(f) + " is in CNF,convert it to DNF"
+            self.answer = to_cnf(f)
+        
+        self.userinput = ""
+    
+    def checkIfCorrect(self):
+        return simplify_logic(self.answer) == simplify_logic(self.userinput.replace(" ", ""))
+    
 
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -81,7 +81,7 @@ class MainApplication(tk.Frame):
         tk.Button(self.MenuFrame, text="Learn", image=self.LearnMenuLogo,
                   command=lambda: self.goto_x_Menu(3)).grid(row=3, column=0)
         tk.Button(self.MenuFrame, text="Test", image=self.TestMenuLogo,
-                  command=lambda: self.goto_x_Menu(3)).grid(row=3, column=1)
+                  command=lambda: self.goto_x_Menu(11)).grid(row=3, column=1)
 
         #self.MenuFrame.pack()
         button_window = self.canvas.create_window(300, 250, anchor=tk.NW, window=self.MenuFrame)
@@ -107,7 +107,9 @@ class MainApplication(tk.Frame):
             self.practiceDNF()
         elif x == 7:
             self.practiceCNF()
-
+        elif x == 11:
+            self.TestSubMenu()
+        
     def calculatorMenu(self):
         def updateExpr(value):
             if value == "↔":
@@ -255,17 +257,9 @@ class MainApplication(tk.Frame):
                   command=lambda: self.goto_x_Menu(0)).grid(row=9, column=0)
 
         
-        #tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0), highlightbackground=BgColor).grid(
-            #row=6, column=0)
-        #self.CalculatorMenuFrame.pack()
-        
         self.canvas.create_window(80, 100, anchor=tk.NW, window=self.CalculatorMenuFrame)
         self.canvas.create_window(350, 200, anchor=tk.NW, window=dnfcnfFrame)
         self.canvas.create_window(350, 250, anchor=tk.NW, window=buttonFrame)
-
-
-
-        
 
         def convertToCNF(expr):
             answer1 = "CNF form of ", expr,"  is  ", to_cnf(expr)
@@ -340,9 +334,7 @@ class MainApplication(tk.Frame):
         correctButton = tk.Button(self.EnglishFrame,command=lambda:correct(), text=question[4]).grid(row=ycoordinates[3], column=0)
         tk.Button(self.EnglishFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=7, column=2)
         self.EnglishFrame.pack()
-
-
-    
+ 
     def practiceDNF(self):
         def updateExpr(value):
             expr.set(expr.get() + str(value))
@@ -432,7 +424,6 @@ class MainApplication(tk.Frame):
         self.CalculatorMenuFrame = tk.Frame(self.parent)
 
         prop_formula = dg.get_prop_formula()
-        print(dg.convertToCNF(prop_formula))
 
         HLabel = tk.Label(self.CalculatorMenuFrame, text="Practice Menu: Enter correct").grid(row=0, column=0)
         prop_label = tk.Label(self.CalculatorMenuFrame, text=prop_formula).grid(row=0, column=1)
@@ -488,7 +479,6 @@ class MainApplication(tk.Frame):
         goBackButton = tk.Button(self.CalculatorMenuFrame, text="Go Back", command=lambda: self.goto_x_Menu(0)).grid(row=6, column=0)
         self.CalculatorMenuFrame.pack()
         buttonFrame.pack()
-
 
     def learnMenu(self):
         '''
@@ -569,6 +559,150 @@ class MainApplication(tk.Frame):
         goBackButton = tk.Button(self.LearnMenuFrame, text="Go Back To Main Menu",
                                  command=lambda: self.goto_x_Menu(0)).grid(row=1, column=0)
         self.LearnMenuFrame.pack()
+    
+
+    def TestSubMenu(self):
+        self.TestSubMenuFrame = tk.Frame(self.parent)
+        tk.Label(self.TestSubMenuFrame, text="You will be given 10 randomised questions related to propositional logic. \n You will have 15 minutes to answer them. \n Click begin once you are ready to start and GOOD LUCK!!").grid(row=0, column=0)
+        s = tk.Button(self.TestSubMenuFrame,command=lambda:self.beginTest(10, 15), text="BEGIN")
+        s.grid(row=2, column=0)
+        self.TestSubMenuFrame.pack()
+    
+    def beginTest(self, numOfQ, timeLim):
+        useranswer = tk.StringVar("")
+        self.clearwin()
+        qFrame = tk.Frame(self.parent)
+        Score = 0
+
+        QList = self.generateQuestions(numOfQ)
+        CurrentQuestion = tk.IntVar(0)
+        timeTaken = tk.IntVar(0)
+        currentTime = tk.Label(qFrame, text="Time Taken: 0")
+        currentTime.grid(row=0, column=0)
+
+        def updateTimer():
+            if timeTaken.get() < 6000:
+                timeTaken.set(timeTaken.get() + 1)
+                currentTime.configure(text="Time Taken: "+str(timeTaken.get()))
+                self.parent.after(1000, updateTimer)
+            else:
+                result = tk.Toplevel(self.parent)
+                tk.Label(result, text="Your didn't answer the questions in time: ").pack()
+                tk.Label(result, text="You have FAILED!").pack()
+                tk.Button(result, text="Continue", command=lambda: self.goto_x_Menu(11)).pack()
+
+
+        def showNextQ():
+            previousButton.config(state='normal') 
+            QList[CurrentQuestion.get()].userinput = useranswer.get()
+            CurrentQuestion.set(CurrentQuestion.get() + 1)
+            if QList[CurrentQuestion.get()].userinput != "":
+                useranswer.set(QList[CurrentQuestion.get()].userinput)
+            elif QList[CurrentQuestion.get()].userinput == "":
+                clearExpr()
+            questionNumber.configure(text="Question No: " + str(CurrentQuestion.get())) 
+            question.configure(text=QList[CurrentQuestion.get()].question)
+            if CurrentQuestion.get() == len(QList) - 1:
+                nextButton.config(state='disabled') 
+                submitButton.config(state='normal')
+        
+        def showPrevQ():
+            nextButton.config(state='normal')
+            QList[CurrentQuestion.get()].userinput = useranswer.get()
+            CurrentQuestion.set(CurrentQuestion.get() - 1)
+            if QList[CurrentQuestion.get()].userinput != "":
+                useranswer.set(QList[CurrentQuestion.get()].userinput)
+            questionNumber.configure(text="Question No: " + str(CurrentQuestion.get()))
+            question.configure(text=QList[CurrentQuestion.get()].question)
+            
+            if CurrentQuestion.get() == 0:
+                previousButton.config(state='disabled') 
+        
+        def submit():
+            QList[CurrentQuestion.get()].userinput = useranswer.get()
+            score = 0
+            didntanswer = 0
+            for q in QList:
+                try:
+                    if q.checkIfCorrect():
+                        score += 1
+                except:
+                    pass
+                if q.userinput == "":
+                    didntanswer += 1
+            
+            percentage = score / len(QList) * 100
+            result = tk.Toplevel(self.parent)
+            tk.Label(result, text="Your total score is: " + str(score)).pack()
+            tk.Label(result, text="You did not answer " + str(didntanswer) + " questions").pack()
+            tk.Label(result, text="Your percentage for this test was: " + str(percentage)).pack()
+            if percentage > 50:
+                tk.Label(result, text="Your have PASSED!: ").pack()
+            else:
+                tk.Label(result, text="You have FAILED!: ").pack()
+
+            tk.Button(result, text="Continue", command=lambda: self.goto_x_Menu(11)).pack()
+            
+                
+            
+
+        def updateExpr(value):
+            useranswer.set(useranswer.get() + str(value))
+
+        def clearExpr():
+            useranswer.set("")
+
+        def delExpr():
+            useranswer.set(useranswer.get()[:-1])
+        
+        questionNumber = tk.Label(qFrame, text="Question No: " + str(CurrentQuestion.get()))
+        questionNumber.grid(row=0, column=1)
+
+        question = tk.Label(qFrame, text=QList[CurrentQuestion.get()].question)
+        question.grid(row=1, column=0)
+        tk.Entry(qFrame, textvariable=useranswer).grid(row=2, column=0)
+        
+        buttonFrame = tk.Frame(self.parent)
+        andButton = tk.Button(buttonFrame, text="&", width=10, height=3, command=lambda: updateExpr("&")).grid(row=3,
+                                                                                                               column=1)
+        orButton = tk.Button(buttonFrame, text="|", width=10, height=3, command=lambda: updateExpr("|")).grid(row=3,
+                                                                                                              column=2)
+        # SECONADRY VARIABLES
+        aVarButton = tk.Button(buttonFrame, text="A", width=10, height=3, command=lambda: updateExpr("A")).grid(row=5,
+                                                                                                                column=0)
+        bVarButton = tk.Button(buttonFrame, text="B", width=10, height=3, command=lambda: updateExpr("B")).grid(row=5,
+                                                                                                                column=1)
+        cVarButton = tk.Button(buttonFrame, text="C", width=10, height=3, command=lambda: updateExpr("C")).grid(row=5,
+                                                                                                                column=2)
+        notaVarButton = tk.Button(buttonFrame, text="~A", width=10, height=3, command=lambda: updateExpr("~A")).grid(
+            row=6, column=0)
+        notbVarButton = tk.Button(buttonFrame, text="~B", width=10, height=3, command=lambda: updateExpr("~B")).grid(
+            row=6, column=1)
+        notcVarButton = tk.Button(buttonFrame, text="~C", width=10, height=3, command=lambda: updateExpr("~C")).grid(
+            row=6, column=2)
+        lparenButton = tk.Button(buttonFrame, text="(", width=10, height=3, command=lambda: updateExpr("(")).grid(
+            row=4, column=1)
+        rparenButton = tk.Button(buttonFrame, text=")", width=10, height=3, command=lambda: updateExpr(")")).grid(
+            row=4, column=2)
+
+        
+        previousButton = tk.Button(buttonFrame, text="Previous Q", state='disabled', command=lambda: showPrevQ())
+        previousButton.grid(row=7, column=0)
+        nextButton = tk.Button(buttonFrame, text="Next Q", command=lambda: showNextQ())
+        nextButton.grid(row=7, column=2)
+        submitButton = tk.Button(buttonFrame, text="FINISH TEST", state='disabled', command=lambda: submit())
+        submitButton.grid(row=8, column=1)
+        updateTimer()
+        qFrame.pack()
+        buttonFrame.pack()
+
+    def generateQuestions(self, amount):
+        QList = []
+        for _ in range(0, amount):
+            Q = Question()
+            QList.append(Q)
+        return QList
+
 
 if __name__ == "__main__":
     root = tk.Tk()
